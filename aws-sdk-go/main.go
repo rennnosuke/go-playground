@@ -1,0 +1,1 @@
+package aws_sdk_go
