@@ -1,4 +1,4 @@
-package goroutine
+package ch8
 
 import (
 	"fmt"
