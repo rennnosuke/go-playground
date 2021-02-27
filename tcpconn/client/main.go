@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"net"
@@ -20,11 +19,8 @@ func main() {
 	fmt.Printf("client connected to %s:\n", addr)
 
 	for {
-		scanner := bufio.NewScanner(os.Stdin)
-		if scanner.Scan() {
-			if _, err := io.WriteString(conn, scanner.Text()); err != nil {
-				panic(err)
-			}
+		if _, err := io.Copy(conn, os.Stdin); err != nil {
+			panic(err)
 		}
 	}
 }

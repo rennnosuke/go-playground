@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 )
@@ -27,15 +28,13 @@ func main() {
 		}
 
 		go func(conn net.Conn) {
-			fmt.Println("server connected to client:")
-			buf := make([]byte, 1024)
+			fmt.Println("server is connected to client:")
 
 			for {
-				n, err := conn.Read(buf)
-				if err != nil {
-					panic(err)
+				if _, err := io.Copy(os.Stdout, conn); err != nil {
+					_ = fmt.Errorf("error occured: %s", err)
+					break
 				}
-				fmt.Print(string(buf[:n]))
 			}
 		}(conn)
 	}
