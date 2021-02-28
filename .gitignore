@@ -21,3 +21,5 @@
 
 # ignore text file
 .txt
+# ignore gzip complessed file
+.gz
