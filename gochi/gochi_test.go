@@ -1,6 +1,7 @@
 package gochi
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -83,4 +84,35 @@ func TestGoChi_RESTRouting(t *testing.T) {
 	r.Mount("/another", anotherRouter)
 
 	http.ListenAndServe(":3333", r)
+}
+
+func TestGoChi_WithContext(t *testing.T) {
+	r := chi.NewRouter()
+
+	getHoge := func(ctx context.Context) {
+		fmt.Println(ctx.Value("key"))
+	}
+
+	r.Get("/hoge", func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "key", "value")
+		getHoge(ctx)
+	})
+
+	go func() {
+		time.Sleep(time.Second)
+
+		resp, err := http.Get("http://localhost:5555/hoge")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer resp.Body.Close()
+
+		bytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(string(bytes))
+	}()
+
+	http.ListenAndServe(":5555", r)
 }
