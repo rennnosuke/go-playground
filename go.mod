@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/aws/aws-sdk-go v1.33.5 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.7.1 // indirect
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/go-chi/chi/v5 v5.0.1 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
