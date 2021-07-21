@@ -14,7 +14,6 @@ import (
 )
 
 const tableName = "test-dax-game-score"
-const limit = 10
 
 func main() {
 	if len(os.Args) <= 1 {
