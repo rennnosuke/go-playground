@@ -15,12 +15,16 @@ import (
 
 const tableName = "test-dax-game-score"
 
+const help = `invalid arguments.
+please input command as following:
+
+- get item:  dax-test put 1 1
+- put item:  dax-test put 1 1 100
+`
+
 func main() {
 	if len(os.Args) <= 1 {
-		_, _ = fmt.Fprintf(os.Stderr, "invalid arguments.\n")
-		_, _ = fmt.Fprintf(os.Stderr, "please input command as following:\n")
-		_, _ = fmt.Fprintf(os.Stderr, "- get item:  dax-test put 1 1.\n")
-		_, _ = fmt.Fprintf(os.Stderr, "- put item:  dax-test put 1 1 100.\n")
+		_, _ = fmt.Fprintf(os.Stderr, help)
 		os.Exit(0)
 	}
 
