@@ -23,7 +23,9 @@ please input command as following:
 `
 
 func main() {
-	if len(os.Args) <= 1 {
+	args := valueArgs()
+
+	if len(args) <= 1 {
 		_, _ = fmt.Fprintf(os.Stderr, help)
 		os.Exit(0)
 	}
@@ -36,14 +38,14 @@ func main() {
 	}
 	client := dynamodb.NewFromConfig(cfg)
 
-	switch os.Args[1] {
+	switch args[0] {
 	case "put":
-		if err := putItem(ctx, client, valueArgs()[1:]); err != nil {
+		if err := putItem(ctx, client, args[1:]); err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "failed to put item: err=%v", err)
 			os.Exit(0)
 		}
 	case "get":
-		item, err := getItem(ctx, client, valueArgs()[1:])
+		item, err := getItem(ctx, client, args[1:])
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "failed to get item: err=%v", err)
 			os.Exit(0)
