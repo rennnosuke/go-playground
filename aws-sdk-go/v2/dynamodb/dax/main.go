@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,6 +14,7 @@ import (
 )
 
 const tableName = "test-dax-game-score"
+const limit = 10
 
 func main() {
 	if len(os.Args) <= 1 {
@@ -38,22 +40,49 @@ func main() {
 			os.Exit(0)
 		}
 	case "get":
+		item, err := getItem(ctx, client, valueArgs()[1:])
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "failed to get item: err=%v", err)
+			os.Exit(0)
+		}
+		jsonStr, err := asJSONStr(item)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "failed to parse item as json: err=%v", err)
+			os.Exit(0)
+		}
+		fmt.Println(jsonStr)
 	default:
 		_, _ = fmt.Fprintf(os.Stderr, "invalid arguments.")
 		os.Exit(0)
 	}
 }
 
+func getItem(ctx context.Context, client *dynamodb.Client, args []string) (map[string]types.AttributeValue, error) {
+	// validate arguments
+	if err := validateArgs(args, 2); err != nil {
+		return nil, err
+	}
+
+	input := dynamodb.GetItemInput{
+		Key: map[string]types.AttributeValue{
+			"user_id": &types.AttributeValueMemberN{Value: args[0]},
+			"game_id": &types.AttributeValueMemberN{Value: args[1]},
+		},
+		TableName: aws.String(tableName),
+	}
+
+	res, err := client.GetItem(ctx, &input)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Item, nil
+}
+
 func putItem(ctx context.Context, client *dynamodb.Client, args []string) error {
 	// validate arguments
-	const argLen = 3
-	if len(args) != argLen {
-		return fmt.Errorf("len(args) is not %d, got=%d(%v)", argLen, len(args), args)
-	}
-	for i, arg := range args {
-		if _, err := strconv.Atoi(arg); err != nil {
-			return fmt.Errorf("%v: failed to parse argument[%d]: %s", err, i, arg)
-		}
+	if err := validateArgs(args, 3); err != nil {
+		return err
 	}
 
 	// put item
@@ -78,4 +107,24 @@ func valueArgs() []string {
 		return os.Args[2:]
 	}
 	return os.Args[1:]
+}
+
+func validateArgs(args []string, argLen int) error {
+	if len(args) != argLen {
+		return fmt.Errorf("len(args) is not %d, got=%d(%v)", argLen, len(args), args)
+	}
+	for i, arg := range args {
+		if _, err := strconv.Atoi(arg); err != nil {
+			return fmt.Errorf("%v: failed to parse argument[%d]: %s", err, i, arg)
+		}
+	}
+	return nil
+}
+
+func asJSONStr(obj interface{}) (string, error) {
+	bytes, err := json.Marshal(obj)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
