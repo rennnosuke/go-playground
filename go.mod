@@ -6,6 +6,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/aws/aws-sdk-go-v2 v1.7.1
 	github.com/aws/aws-sdk-go-v2/config v1.5.0
+	github.com/aws/aws-sdk-go-v2/service/dax v1.3.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.4.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-chi/chi/v5 v5.0.1
