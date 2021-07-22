@@ -4,9 +4,9 @@ go 1.14
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.4.1
+	github.com/aws/aws-dax-go v1.2.8
 	github.com/aws/aws-sdk-go-v2 v1.7.1
 	github.com/aws/aws-sdk-go-v2/config v1.5.0
-	github.com/aws/aws-sdk-go-v2/service/dax v1.3.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.4.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-chi/chi/v5 v5.0.1
@@ -19,7 +19,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/ugorji/go v1.2.4 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
-	golang.org/x/net v0.0.0-20200904194848-62affa334b73
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	golang.org/x/sys v0.0.0-20210301091718-77cc2087c03b // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
