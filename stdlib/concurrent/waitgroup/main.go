@@ -21,7 +21,7 @@ func main() {
 			fmt.Println("done.")
 		}(&wg)
 	}
-	
+
 	fmt.Println("waiting...")
 	wg.Wait()
 	fmt.Println("all done.")
