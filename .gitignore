@@ -23,3 +23,6 @@
 .txt
 # ignore gzip complessed file
 .gz
+
+# ignore files in sqlx
+sqlx/db-5-7
