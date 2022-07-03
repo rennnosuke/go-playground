@@ -26,3 +26,4 @@
 
 # ignore files in sqlx
 sqlx/db-5-7
+sqlx/.env
