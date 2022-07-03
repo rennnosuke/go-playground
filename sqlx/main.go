@@ -57,5 +57,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(people)
+	fmt.Printf("[db.Select]: %s\n", people)
+
+	var person Person
+	err = db.Get(&person, "SELECT * FROM person WHERE first_name=?", "Jason")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("[db.Get]: %s\n", person)
 }
