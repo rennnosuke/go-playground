@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -44,9 +45,12 @@ func main() {
 	// init
 	db.MustExec(schema)
 
+	ctx := context.Background()
+
 	// insert
 	tx := db.MustBegin()
 	tx.MustExec("INSERT INTO person (first_name, last_name, email) VALUES (?, ?, ?)", "Jason", "Moiron", "jmoiron@jmoiron.net")
+	tx.MustExec("INSERT INTO person (first_name, last_name, email) VALUES (?, ?, ?)", "John", "Doe", "johndoeDNE@gmail.net")
 	if err := tx.Commit(); err != nil {
 		panic(err)
 	}
@@ -59,10 +63,28 @@ func main() {
 	}
 	fmt.Printf("[db.Select]: %s\n", people)
 
+	// select with context
+	var people2 []Person
+	err = db.SelectContext(ctx, &people2, "SELECT * FROM person ORDER BY first_name ASC")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("[db.SelectContext]: %s\n", people2)
+
+	// get
 	var person Person
 	err = db.Get(&person, "SELECT * FROM person WHERE first_name=?", "Jason")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("[db.Get]: %s\n", person)
+
+	// get with context
+	var person2 Person
+	err = db.GetContext(ctx, &person2, "SELECT * FROM person WHERE first_name=?", "John")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("[db.GetContext]: %s\n", person2)
+
 }
