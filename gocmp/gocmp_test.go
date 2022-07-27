@@ -23,9 +23,8 @@ type Metadata struct {
 }
 
 func TestGoCmp(t *testing.T) {
-	sWant, sGot := Struct{1}, Struct{1}
-
 	// same
+	sWant, sGot := Struct{1}, Struct{1}
 	if diff := cmp.Diff(sWant, sGot); diff != "" {
 		t.Errorf("mismatch (-want +got):\n%s", diff)
 	}
