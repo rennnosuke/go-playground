@@ -31,6 +31,11 @@ func TestSquirrel(t *testing.T) {
 			builder: sq.Select("id").From("users").Where(sq.Eq{"id": 1}),
 			want:    "SELECT id FROM users WHERE id = ?",
 		},
+		{
+			name:    "select#03 - `in` phrase",
+			builder: sq.Select("*").From("users").Where(sq.Eq{"id": []int{1, 2, 3}}),
+			want:    "SELECT * FROM users WHERE id IN (?,?,?)",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
