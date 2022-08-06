@@ -22,9 +22,14 @@ func TestSquirrel(t *testing.T) {
 		want string
 	}{
 		{
-			name:    "select#1",
+			name:    "select#01",
 			builder: sq.Select("*").From("users").Where(sq.Eq{"id": 1}),
 			want:    "SELECT * FROM users WHERE id = ?",
+		},
+		{
+			name:    "select#02",
+			builder: sq.Select("id").From("users").Where(sq.Eq{"id": 1}),
+			want:    "SELECT id FROM users WHERE id = ?",
 		},
 	}
 	for _, tt := range tests {
