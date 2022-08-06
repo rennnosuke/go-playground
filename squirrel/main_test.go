@@ -36,7 +36,14 @@ func TestSquirrel(t *testing.T) {
 			builder: sq.Select("*").From("users").Where(sq.Eq{"id": []int{1, 2, 3}}),
 			want:    "SELECT * FROM users WHERE id IN (?,?,?)",
 		},
+		{
+			// See: https://github.com/Masterminds/squirrel/pull/180#issuecomment-778403270
+			name:    "select#04 - `between` phrase",
+			builder: sq.Select("*").From("users").Where(sq.Expr("id BETWEEN ? AND ?", 1, 10)),
+			want:    "SELECT * FROM users WHERE id BETWEEN ? AND ?",
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, args, err := tt.builder.ToSql()
