@@ -42,6 +42,11 @@ func TestSquirrel(t *testing.T) {
 			builder: sq.Select("*").From("users").Where(sq.Expr("id BETWEEN ? AND ?", 1, 10)),
 			want:    "SELECT * FROM users WHERE id BETWEEN ? AND ?",
 		},
+		{
+			name:    "select#05 - count",
+			builder: sq.Select("COUNT(id OR NULL)").From("users").Where(sq.Expr("name like 'hoge%'", 1, 10)),
+			want:    "SELECT COUNT(id OR NULL) FROM users WHERE name like 'hoge%'",
+		},
 	}
 
 	for _, tt := range tests {
