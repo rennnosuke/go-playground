@@ -47,6 +47,16 @@ func TestSquirrel(t *testing.T) {
 			builder: sq.Select("COUNT(id OR NULL)").From("users").Where(sq.Expr("name like 'hoge%'", 1, 10)),
 			want:    "SELECT COUNT(id OR NULL) FROM users WHERE name like 'hoge%'",
 		},
+		{
+			name:    "insert#1",
+			builder: sq.Insert("users").Columns("id").Values("1"),
+			want:    "INSERT INTO users (id) VALUES (?)",
+		},
+		{
+			name:    "insert#1",
+			builder: sq.Insert("users").Values("1"),
+			want:    "INSERT INTO users VALUES (?)",
+		},
 	}
 
 	for _, tt := range tests {
