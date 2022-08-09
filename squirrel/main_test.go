@@ -53,7 +53,7 @@ func TestSquirrel(t *testing.T) {
 			want:    "INSERT INTO users (id) VALUES (?)",
 		},
 		{
-			name:    "insert#1",
+			name:    "insert#2",
 			builder: sq.Insert("users").Values("1"),
 			want:    "INSERT INTO users VALUES (?)",
 		},
