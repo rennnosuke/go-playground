@@ -7,10 +7,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func hoge() {
-
-}
-
 func TestSquirrel(t *testing.T) {
 	t.Log("start squirrel examples")
 
