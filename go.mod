@@ -17,9 +17,10 @@ require (
 	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6
 	github.com/go-gl/glfw v0.0.0-20220712193148-63cf1f4ef61f
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/google/go-cmp v0.5.6
+	github.com/google/go-cmp v0.5.8
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
+	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 )
 
@@ -55,8 +56,7 @@ require (
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/ugorji/go/codec v1.2.4 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
