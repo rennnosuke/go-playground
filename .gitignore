@@ -25,5 +25,5 @@
 .gz
 
 # ignore files in sqlx
-sqlx/db-5-7
-sqlx/.env
+lib/sqlx/db-5-7
+lib/sqlx/.env
