@@ -15,6 +15,6 @@ func TestSliceToArray(t *testing.T) {
 
 	// after 1.20
 	// array参照を経由しなくても、そのままキャストできる
-	// newCastArr := [4]int(sl)
+	// newCastArr := [3]int(sl)
 	// t.Log(newCastArr)
 }
