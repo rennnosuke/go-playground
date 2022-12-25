@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"testing"
+)
 
 // Recursive 1.20ではcompile error
 type Recursive interface {
@@ -13,7 +15,7 @@ func (r *RecursiveImpl) f() interface{ Recursive } {
 	return r
 }
 
-func main() {
+func TestIFCycleBuildErr(t *testing.T) {
 	var r RecursiveImpl
-	fmt.Printf("%+v\n", r.f())
+	t.Logf("%+v\n", r.f())
 }
