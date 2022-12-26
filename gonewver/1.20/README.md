@@ -7,3 +7,11 @@
 ```shell
 go test -v -run Test -skip skip_test.go
 ```
+
+## Skip `go generate`
+
+[change](https://go-review.googlesource.com/c/go/+/421440)
+
+```shell
+go generate -skip th..sand './generate/flag.go'
+```
