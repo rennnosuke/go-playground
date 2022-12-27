@@ -15,3 +15,26 @@ go test -v -run Test -skip skip_test.go
 ```shell
 go generate -skip th..sand './generate/flag.go'
 ```
+
+## `vet` detect loop var in multiple nests
+
+```shell
+go vet ./vetloopvar
+```
+
+### ./vetloopvar/vetloopvar.go
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	seq := []int{1, 2, 3}
+	for k, v := range seq {
+		func() {
+			fmt.Println(k, v)
+		}()
+	}
+}
+```
