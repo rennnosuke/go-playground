@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.3.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.4.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.19.1
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-chi/chi/v5 v5.0.1
 	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6
 	github.com/go-gl/glfw v0.0.0-20220712193148-63cf1f4ef61f
