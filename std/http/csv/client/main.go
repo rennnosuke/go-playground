@@ -20,7 +20,10 @@ func main() {
 		Transport: tr,
 		Timeout:   time.Second,
 	}
-	csv := "1,2,3,4,5"
+	csv := `
+1,2,3,4,5
+6,7,8,9,0
+`
 	body := io.NopCloser(strings.NewReader(csv))
 	header := http.Header(map[string][]string{
 		"Content-Type": {"text/csv"},
