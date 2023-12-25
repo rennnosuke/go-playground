@@ -32,7 +32,7 @@ func main() {
 		csvWriter := csv.NewReader(r.Body)
 		// comment accept
 		csvWriter.Comment = '#'
-
+		// read all records
 		records, err := csvWriter.ReadAll()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
