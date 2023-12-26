@@ -105,6 +105,16 @@ func TestCreate(t *testing.T) {
 			want:    1,
 			wantErr: false,
 		},
+		{
+			name: "db is nil",
+			args: args{
+				ctx: context.Background(),
+				db:  nil,
+				p:   Product{},
+			},
+			want:    0,
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
