@@ -3,7 +3,7 @@ module github.com/rennnosuke/go-playground
 go 1.18
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.4.1
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/Masterminds/squirrel v1.5.3
 	github.com/aws/aws-dax-go v1.2.8
 	github.com/aws/aws-sdk-go v1.36.22
