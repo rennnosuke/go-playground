@@ -58,3 +58,11 @@ func Update(ctx context.Context, db *sql.DB, p *Product) error {
 	_, err := db.ExecContext(ctx, "UPDATE products SET name = ?, price = ?, updated_at = ? WHERE id = ?", p.Name, p.Price, p.UpdatedAt, p.ID)
 	return err
 }
+
+func Delete(ctx context.Context, db *sql.DB, id int) error {
+	if db == nil {
+		return nil
+	}
+	_, err := db.ExecContext(ctx, "DELETE FROM products WHERE id = ?", id)
+	return err
+}
