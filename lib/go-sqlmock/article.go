@@ -3,7 +3,6 @@ package sqlmock
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -46,20 +45,4 @@ func Create(id int, title, content string, db *sql.DB) error {
 	}
 
 	return nil
-}
-
-func main() {
-	db, err := sql.Open("mysql", "root@/blogsystem")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to open db")
-		os.Exit(1)
-	}
-
-	a, err := GetByID(1, db)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get article: %s", err)
-		os.Exit(1)
-	}
-
-	fmt.Printf("%v", a)
 }
