@@ -43,3 +43,11 @@ func Create(ctx context.Context, db *sql.DB, p Product) (int64, error) {
 	}
 	return result.LastInsertId()
 }
+
+func Update(ctx context.Context, db *sql.DB, p Product) error {
+	if db == nil {
+		return nil
+	}
+	_, err := db.ExecContext(ctx, "UPDATE products SET name = ?, price = ? WHERE id = ?", p.Name, p.Price, p.ID)
+	return err
+}
