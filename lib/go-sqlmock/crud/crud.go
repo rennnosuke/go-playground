@@ -14,7 +14,7 @@ type Product struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func GetProducts(ctx context.Context, db *sql.DB) ([]Product, error) {
+func FindAll(ctx context.Context, db *sql.DB) ([]Product, error) {
 	if db == nil {
 		return nil, nil
 	}

@@ -12,7 +12,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
-func TestGetProducts(t *testing.T) {
+func TestFindAll(t *testing.T) {
 	type args struct {
 		ctx context.Context
 		db  *sql.DB
@@ -60,13 +60,13 @@ func TestGetProducts(t *testing.T) {
 					db.Close()
 				}
 			}()
-			got, err := GetProducts(context.Background(), db)
+			got, err := FindAll(context.Background(), db)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GetProducts() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("FindAll() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if diff := cmp.Diff(tt.want, got, cmpopts.EquateApproxTime(time.Second)); diff != "" {
-				t.Errorf("GetProducts() mismatch (-want +got):\n%s", diff)
+				t.Errorf("FindAll() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
