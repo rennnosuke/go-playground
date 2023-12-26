@@ -34,6 +34,9 @@ func GetProducts(ctx context.Context, db *sql.DB) ([]Product, error) {
 }
 
 func Create(ctx context.Context, db *sql.DB, p Product) (int64, error) {
+	if db == nil {
+		return 0, nil
+	}
 	result, err := db.ExecContext(ctx, "INSERT INTO products (name, price) VALUES (?, ?)", p.Name, p.Price)
 	if err != nil {
 		return 0, err
