@@ -129,3 +129,50 @@ func TestCreate(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdate(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		db  *sql.DB
+		p   Product
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: context.Background(),
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectExec("UPDATE products SET name = (.+), price = (.+) WHERE id = (.+)").
+						WithArgs("updated", 10000, 1).
+						WillReturnResult(sqlmock.NewResult(1, 1))
+				}),
+				p: Product{
+					ID:    1,
+					Name:  "updated",
+					Price: 10000,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "db is nil",
+			args: args{
+				ctx: context.Background(),
+				db:  nil,
+				p:   Product{},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := Update(tt.args.ctx, tt.args.db, tt.args.p); (err != nil) != tt.wantErr {
+				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
