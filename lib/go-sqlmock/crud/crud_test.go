@@ -3,7 +3,6 @@ package crud
 import (
 	"context"
 	"database/sql"
-	"database/sql/driver"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -25,13 +24,13 @@ func TestGetProducts(t *testing.T) {
 			name: "success",
 			args: args{
 				ctx: context.Background(),
-				db: getDB(t, excepts{
-					query:   "SELECT (.+) FROM products",
-					columns: []string{"id", "name", "price"},
-					returnRows: [][]driver.Value{
-						{1, "test1", 1000},
-						{2, "test2", 2000},
-					},
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectQuery("SELECT (.+) FROM products").
+						WillReturnRows(
+							sqlmock.NewRows([]string{"id", "name", "price"}).
+								AddRow(1, "test1", 1000).
+								AddRow(2, "test2", 2000),
+						)
 				}),
 			},
 			want: []Product{
@@ -70,22 +69,12 @@ func TestGetProducts(t *testing.T) {
 	}
 }
 
-type excepts struct {
-	query      string
-	columns    []string
-	returnRows [][]driver.Value
-}
-
-func getDB(t *testing.T, m excepts) *sql.DB {
+func getDB(t *testing.T, fn func(m sqlmock.Sqlmock)) *sql.DB {
 	t.Helper()
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatal(err)
 	}
-	rows := sqlmock.NewRows(m.columns)
-	for _, record := range m.returnRows {
-		rows.AddRow(record...)
-	}
-	mock.ExpectQuery(m.query).WillReturnRows(rows)
+	fn(mock)
 	return db
 }
