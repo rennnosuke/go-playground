@@ -78,3 +78,44 @@ func getDB(t *testing.T, fn func(m sqlmock.Sqlmock)) *sql.DB {
 	fn(mock)
 	return db
 }
+
+func TestCreate(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		db  *sql.DB
+		p   Product
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int64
+		wantErr bool
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: context.Background(),
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectExec("INSERT INTO products (.+) VALUES (.+)").
+						WithArgs("test", 1000).
+						WillReturnResult(sqlmock.NewResult(1, 1))
+				}),
+				p: Product{Name: "test", Price: 1000},
+			},
+			want:    1,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Create(tt.args.ctx, tt.args.db, tt.args.p)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("Create() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
