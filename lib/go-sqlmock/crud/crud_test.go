@@ -3,10 +3,13 @@ package crud
 import (
 	"context"
 	"database/sql"
+	"database/sql/driver"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestGetProducts(t *testing.T) {
@@ -27,15 +30,15 @@ func TestGetProducts(t *testing.T) {
 				db: getDB(t, func(m sqlmock.Sqlmock) {
 					m.ExpectQuery("SELECT (.+) FROM products").
 						WillReturnRows(
-							sqlmock.NewRows([]string{"id", "name", "price"}).
-								AddRow(1, "test1", 1000).
-								AddRow(2, "test2", 2000),
+							sqlmock.NewRows([]string{"id", "name", "price", "created_at", "updated_at"}).
+								AddRow(1, "test1", 1000, time.Now(), time.Now()).
+								AddRow(2, "test2", 2000, time.Now(), time.Now()),
 						)
 				}),
 			},
 			want: []Product{
-				{ID: 1, Name: "test1", Price: 1000},
-				{ID: 2, Name: "test2", Price: 2000},
+				{ID: 1, Name: "test1", Price: 1000, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+				{ID: 2, Name: "test2", Price: 2000, CreatedAt: time.Now(), UpdatedAt: time.Now()},
 			},
 			wantErr: false,
 		},
@@ -62,8 +65,106 @@ func TestGetProducts(t *testing.T) {
 				t.Errorf("GetProducts() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
+			if diff := cmp.Diff(tt.want, got, cmpopts.EquateApproxTime(time.Second)); diff != "" {
 				t.Errorf("GetProducts() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestCreate(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		db  *sql.DB
+		p   *Product
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int64
+		wantErr bool
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: context.Background(),
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectExec("INSERT INTO products (.+) VALUES (.+)").
+						WithArgs("test", 1000, ApproxTime{}, ApproxTime{}).
+						WillReturnResult(sqlmock.NewResult(1, 1))
+				}),
+				p: &Product{Name: "test", Price: 1000},
+			},
+			want:    1,
+			wantErr: false,
+		},
+		{
+			name: "db is nil",
+			args: args{
+				ctx: context.Background(),
+				db:  nil,
+				p:   nil,
+			},
+			want:    0,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Create(tt.args.ctx, tt.args.db, tt.args.p)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if diff := cmp.Diff(tt.want, got, cmpopts.EquateApproxTime(time.Second)); diff != "" {
+				t.Errorf("Create() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		db  *sql.DB
+		p   *Product
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: context.Background(),
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectExec("UPDATE products SET name = (.+), price = (.+), updated_at = (.+) WHERE id = (.+)").
+						WithArgs("updated", 10000, ApproxTime{}, 1).
+						WillReturnResult(sqlmock.NewResult(1, 1))
+				}),
+				p: &Product{
+					ID:    1,
+					Name:  "updated",
+					Price: 10000,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "db is nil",
+			args: args{
+				ctx: context.Background(),
+				db:  nil,
+				p:   nil,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := Update(tt.args.ctx, tt.args.db, tt.args.p); (err != nil) != tt.wantErr {
+				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -79,100 +180,13 @@ func getDB(t *testing.T, fn func(m sqlmock.Sqlmock)) *sql.DB {
 	return db
 }
 
-func TestCreate(t *testing.T) {
-	type args struct {
-		ctx context.Context
-		db  *sql.DB
-		p   Product
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		{
-			name: "success",
-			args: args{
-				ctx: context.Background(),
-				db: getDB(t, func(m sqlmock.Sqlmock) {
-					m.ExpectExec("INSERT INTO products (.+) VALUES (.+)").
-						WithArgs("test", 1000).
-						WillReturnResult(sqlmock.NewResult(1, 1))
-				}),
-				p: Product{Name: "test", Price: 1000},
-			},
-			want:    1,
-			wantErr: false,
-		},
-		{
-			name: "db is nil",
-			args: args{
-				ctx: context.Background(),
-				db:  nil,
-				p:   Product{},
-			},
-			want:    0,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := Create(tt.args.ctx, tt.args.db, tt.args.p)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("Create() mismatch (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
+type ApproxTime time.Time
 
-func TestUpdate(t *testing.T) {
-	type args struct {
-		ctx context.Context
-		db  *sql.DB
-		p   Product
+// Match satisfies sqlmock.Argument interface
+func (a ApproxTime) Match(v driver.Value) bool {
+	t, ok := v.(time.Time)
+	if !ok {
+		return false
 	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			name: "success",
-			args: args{
-				ctx: context.Background(),
-				db: getDB(t, func(m sqlmock.Sqlmock) {
-					m.ExpectExec("UPDATE products SET name = (.+), price = (.+) WHERE id = (.+)").
-						WithArgs("updated", 10000, 1).
-						WillReturnResult(sqlmock.NewResult(1, 1))
-				}),
-				p: Product{
-					ID:    1,
-					Name:  "updated",
-					Price: 10000,
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "db is nil",
-			args: args{
-				ctx: context.Background(),
-				db:  nil,
-				p:   Product{},
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Update(tt.args.ctx, tt.args.db, tt.args.p); (err != nil) != tt.wantErr {
-				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	return cmp.Diff(a, t, cmpopts.EquateApproxTime(time.Second)) != ""
 }

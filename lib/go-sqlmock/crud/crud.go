@@ -3,12 +3,15 @@ package crud
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 type Product struct {
-	ID    int    `db:"id"`
-	Name  string `db:"name"`
-	Price int    `db:"price"`
+	ID        int       `db:"id"`
+	Name      string    `db:"name"`
+	Price     int       `db:"price"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
 func GetProducts(ctx context.Context, db *sql.DB) ([]Product, error) {
@@ -25,7 +28,7 @@ func GetProducts(ctx context.Context, db *sql.DB) ([]Product, error) {
 	results := make([]Product, 0)
 	for rows.Next() {
 		var p Product
-		if err := rows.Scan(&p.ID, &p.Name, &p.Price); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		results = append(results, p)
@@ -33,21 +36,25 @@ func GetProducts(ctx context.Context, db *sql.DB) ([]Product, error) {
 	return results, nil
 }
 
-func Create(ctx context.Context, db *sql.DB, p Product) (int64, error) {
+func Create(ctx context.Context, db *sql.DB, p *Product) (int64, error) {
 	if db == nil {
 		return 0, nil
 	}
-	result, err := db.ExecContext(ctx, "INSERT INTO products (name, price) VALUES (?, ?)", p.Name, p.Price)
+	now := time.Now()
+	p.CreatedAt = now
+	p.UpdatedAt = now
+	result, err := db.ExecContext(ctx, "INSERT INTO products (name, price, created_at, updated_at) VALUES (?, ?, ?, ?)", p.Name, p.Price, p.CreatedAt, p.UpdatedAt)
 	if err != nil {
 		return 0, err
 	}
 	return result.LastInsertId()
 }
 
-func Update(ctx context.Context, db *sql.DB, p Product) error {
+func Update(ctx context.Context, db *sql.DB, p *Product) error {
 	if db == nil {
 		return nil
 	}
-	_, err := db.ExecContext(ctx, "UPDATE products SET name = ?, price = ? WHERE id = ?", p.Name, p.Price, p.ID)
+	p.UpdatedAt = time.Now()
+	_, err := db.ExecContext(ctx, "UPDATE products SET name = ?, price = ?, updated_at = ? WHERE id = ?", p.Name, p.Price, p.UpdatedAt, p.ID)
 	return err
 }
