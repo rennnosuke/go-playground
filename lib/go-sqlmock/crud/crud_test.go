@@ -15,7 +15,7 @@ import (
 func TestFindAll(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		db  *sql.DB
+		db  StdSqlCtx
 	}
 	tests := []struct {
 		name    string
@@ -56,8 +56,8 @@ func TestFindAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			db := tt.args.db
 			defer func() {
-				if db != nil {
-					db.Close()
+				if v, ok := db.(*sql.DB); ok && v != nil {
+					v.Close()
 				}
 			}()
 			got, err := FindAll(context.Background(), db)
@@ -75,7 +75,7 @@ func TestFindAll(t *testing.T) {
 func TestCreate(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		db  *sql.DB
+		db  StdSqlCtx
 		p   *Product
 	}
 	tests := []struct {
@@ -126,7 +126,7 @@ func TestCreate(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		db  *sql.DB
+		db  StdSqlCtx
 		p   *Product
 	}
 	tests := []struct {
@@ -173,7 +173,7 @@ func TestUpdate(t *testing.T) {
 func TestDelete(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		db  *sql.DB
+		db  StdSqlCtx
 		id  int
 	}
 	tests := []struct {
@@ -232,4 +232,44 @@ func (a ApproxTime) Match(v driver.Value) bool {
 		return false
 	}
 	return cmp.Diff(a, t, cmpopts.EquateApproxTime(time.Second)) != ""
+}
+
+func TestUpsert(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		db  *sql.DB
+		p   *Product
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "create - record is not found",
+			args: args{
+				ctx: context.Background(),
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectBegin()
+					m.ExpectExec("INSERT INTO products (.+) VALUES (.+)").
+						WithArgs("test", 1000, ApproxTime{}, ApproxTime{}).
+						WillReturnResult(sqlmock.NewResult(1, 1))
+					m.ExpectCommit()
+				}),
+				p: &Product{
+					ID:    0,
+					Name:  "test",
+					Price: 1000,
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := Upsert(tt.args.ctx, tt.args.db, tt.args.p); (err != nil) != tt.wantErr {
+				t.Errorf("Upsert() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }
