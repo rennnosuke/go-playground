@@ -32,3 +32,11 @@ func GetProducts(ctx context.Context, db *sql.DB) ([]Product, error) {
 	}
 	return results, nil
 }
+
+func Create(ctx context.Context, db *sql.DB, p Product) (int64, error) {
+	result, err := db.ExecContext(ctx, "INSERT INTO products (name, price) VALUES (?, ?)", p.Name, p.Price)
+	if err != nil {
+		return 0, err
+	}
+	return result.LastInsertId()
+}
