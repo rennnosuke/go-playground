@@ -170,6 +170,49 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		db  *sql.DB
+		id  int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: context.Background(),
+				db: getDB(t, func(m sqlmock.Sqlmock) {
+					m.ExpectExec("DELETE FROM products WHERE id = (.+)").
+						WithArgs(1).
+						WillReturnResult(sqlmock.NewResult(1, 1))
+				}),
+				id: 1,
+			},
+			wantErr: false,
+		},
+		{
+			name: "db is nil",
+			args: args{
+				ctx: context.Background(),
+				db:  nil,
+				id:  0,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := Delete(tt.args.ctx, tt.args.db, tt.args.id); (err != nil) != tt.wantErr {
+				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func getDB(t *testing.T, fn func(m sqlmock.Sqlmock)) *sql.DB {
 	t.Helper()
 	db, mock, err := sqlmock.New()
