@@ -16,6 +16,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.1
 	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6
 	github.com/go-gl/glfw v0.0.0-20220712193148-63cf1f4ef61f
+	github.com/go-kit/kit v0.13.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/go-cmp v0.5.8
 	github.com/jmoiron/sqlx v1.3.5
@@ -39,7 +40,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.6.0 // indirect
 	github.com/aws/smithy-go v1.9.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-kit/kit v0.13.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
