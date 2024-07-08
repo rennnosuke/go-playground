@@ -1,6 +1,6 @@
 module github.com/rennnosuke/go-playground
 
-go 1.22.3
+go 1.23
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.1
