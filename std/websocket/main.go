@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"golang.org/x/net/websocket"
+	"golang.org/net/websocket"
 )
 
 func main() {
