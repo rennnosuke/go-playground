@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -22,12 +24,17 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		go func(conn net.Conn) {
 
-		// 3. レスポンスを返す
-		body := `{"status":"ok"}`
-		resp := []byte("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n" + body)
-		if _, err := io.Copy(conn, bytes.NewBuffer(resp)); err != nil {
-			fmt.Printf("Error: %v\n", err)
-		}
+			// 3. レスポンスを返す
+			body := `{"status":"ok"}`
+			resp := []byte("HTTP/1.1 200 OK\r\nContent-Length: " + strconv.Itoa(len(body)) + "\r\n\r\n" + body)
+			if _, err := io.Copy(conn, bytes.NewBuffer(resp)); err != nil {
+				fmt.Printf("Error: %v\n", err)
+			}
+
+			// 4. 一度リクエストを処理したら、1秒待つ（並列リクエスト検証用）
+			time.Sleep(1 * time.Second)
+		}(conn)
 	}
 }
