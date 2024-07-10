@@ -77,4 +77,38 @@ $ go run client.go
 {"status":"ok"}
 ```
 
+### 2. 単一のリクエストを複数回受け付ける
 
+1. で作成したHTTPサーバーが、一度リクエストを受け付けた後も再度リクエストを受け取れるようにします。
+
+#### server.go
+
+`lis.Accept()` でリクエストを受け付けレスポンスを返す処理を for ループで囲みます。
+
+```go
+func main() {
+	fmt.Println("start server...")
+
+	// 1. net.Listenerを作成
+	lis, err := net.Listen("tcp", "localhost:8080")
+	if err != nil {
+		panic(err)
+	}
+
+	for {
+		// 2. リクエストを受け付ける
+		conn, err := lis.Accept()
+		if err != nil {
+			panic(err)
+		}
+
+		// 3. レスポンスを返す
+		body := `{"status":"ok"}`
+		resp := []byte("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n" + body)
+		if _, err := io.Copy(conn, bytes.NewBuffer(resp)); err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
+	}
+}
+
+```
