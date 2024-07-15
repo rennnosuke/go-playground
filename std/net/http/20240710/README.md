@@ -1,13 +1,13 @@
-# ListenAndServe without helper
+# Listen multi http requests concurrently
 
 ## Goal
-`http.ListenAndServe` を使わずに、`net.Listener` と `http.Server` を使ってサーバを起動します。
+`net` パッケージを利用して複数のHTTPリクエストを並列に受け付ける簡易なHTTPサーバーを実装していきます。
+
+ただし、接続を受け付けた後のハンドリングは実装しません。
 
 ## 1. HTTPサーバーのクライアント接続の実装
 
 クライアントの接続を受け付けるHTTPサーバーを実装していきます。
-
-ただし、接続を受け付けた後のハンドリングは実装しません。
 
 ### 1.1. 単一のリクエストを一度だけ受け付ける
 
