@@ -14,8 +14,36 @@ type Client struct {
 単一のHTTPリクエストを実行するときの処理を定義する、 `http.RoundTripper` インターフェース型フィールドです。
 
 （ほとんどの場合） `Transport` はTCPコネクションをキャッシュしているため、再利用される必要があります。
+`Transport` はインターフェースなので、具象型のフィールドでこのキャッシュが管理される必要があります。
 
-デフォルトでは、`http.DefaultTransport`が使用されます。
+`Transport` が `nil` の場合、`http.DefaultTransport`が使用されます。
+
+### DefaultTransport
+
+`http.DefaultTransport` は、デフォルトのHTTPクライアントのTransportです。
+
+`http.Client` で `Transport` フィールドが指定されていない場合、このTransportが使用されます。
+
+また `http.DefaultClient` でも使用されます。
+
+内部ではTCPコネクションをキャッシュします。キャッシュ可能な最大数は `MaxIdleConns` で設定される100ですが、
+ホストあたりの接続数は `MaxIdleConnsPerHost` で設定される2であるため注意が必要です。
+
+```go
+var DefaultTransport RoundTripper = &Transport{
+	Proxy: ProxyFromEnvironment,
+	DialContext: defaultTransportDialContext(&net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}),
+	ForceAttemptHTTP2:     true,
+	MaxIdleConns:          100,
+	IdleConnTimeout:       90 * time.Second,
+	TLSHandshakeTimeout:   10 * time.Second,
+	ExpectContinueTimeout: 1 * time.Second,
+}
+```
+
 
 ## CheckRedirect
 
@@ -30,7 +58,7 @@ HTTPクライアントのリダイレクトポリシーを定義します。
 - `GET` メソッドの場合、リダイレクトは中止され、エラー一つ前のclose済み `Response` と `url.Error` でwrapされたエラーを返します。
 - `ErrUseLastResponse` を返す場合、最後のリクエストの `Response` が返されます。このレスポンスはcloseされていません。
 
-デフォルトでは `http.defaultCheckRedirect` が使用され、10回までリダイレクト可能になります。
+`CheckRedirect` が `nil` の場合 `http.defaultCheckRedirect` が使用され、10回までリダイレクト可能になります。
 
 ## Jar
 
