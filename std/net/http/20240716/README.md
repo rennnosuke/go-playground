@@ -14,7 +14,7 @@ type Client struct {
 単一のHTTPリクエストを実行するときの処理を定義する、 `http.RoundTripper` インターフェース型フィールドです。
 
 （ほとんどの場合） `Transport` はTCPコネクションをキャッシュしているため、再利用される必要があります。
-`Transport` はインターフェースなので、具象型のフィールドでこのキャッシュが管理される必要があります。
+`Transport` を実装する具象型でこのキャッシュが管理される必要があります。
 
 `Transport` が `nil` の場合、`http.DefaultTransport`が使用されます。
 
@@ -27,7 +27,7 @@ type Client struct {
 また `http.DefaultClient` でも使用されます。
 
 内部ではTCPコネクションをキャッシュします。キャッシュ可能な最大数は `MaxIdleConns` で設定される100ですが、
-ホストあたりの接続数は `MaxIdleConnsPerHost` で設定される2であるため注意が必要です。
+ホストあたりの接続数は `MaxIdleConnsPerHost` で設定される `2` であるため注意が必要です。
 
 ```go
 var DefaultTransport RoundTripper = &Transport{
