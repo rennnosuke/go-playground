@@ -12,14 +12,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.3.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.4.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.19.1
-	github.com/go-chi/chi/v5 v5.0.1
 	github.com/go-kit/kit v0.13.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/google/go-cmp v0.5.8
+	github.com/google/go-cmp v0.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
+	github.com/pkg/errors v0.9.1
 	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
-	golang.org/x/net v0.27.0
 )
 
 require (
