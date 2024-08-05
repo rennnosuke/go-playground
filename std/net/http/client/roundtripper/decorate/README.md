@@ -1,5 +1,10 @@
 # `http.Client` リクエストの前処理・後処理を挿入できるRoundTripper
 
+## Blog
+本ドキュメントの内容を以下の記事にまとめました。
+
+[Ren's Blog](https://rennnosukesann.hatenablog.com/entry/2024/08/03/162216?_gl=1*r1ln9n*_gcl_au*MTc1NTM1MTc1Mi4xNzIyNjA3MTMz)
+
 ## What
 `http.Client` のリクエストの前処理・後処理を挿入できるようにするための `http.RoundTripper` を実装します。
 
