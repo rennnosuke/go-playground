@@ -1,6 +1,6 @@
 module github.com/rennnosuke/go-playground
 
-go 1.22
+go 1.22.3
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.1
@@ -17,7 +17,6 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
-	github.com/pkg/errors v0.9.1
 	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
 )
 
