@@ -18,6 +18,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
 	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
+	golang.org/x/tools v0.2.0
 )
 
 require (
