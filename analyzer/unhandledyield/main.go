@@ -21,23 +21,35 @@ var Analyzer = &analysis.Analyzer{
 func run(pass *analysis.Pass) (any, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
+	// 以下の関数を対象にする
+	// 1. 関数定義
+	// 2. 無名関数
 	nodeFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
+		(*ast.FuncLit)(nil),
 	}
 
 	inspect.Preorder(nodeFilter, func(n ast.Node) {
-		_ = n.(*ast.FuncDecl)
-
-		// 以下の関数を対象にする
-		// 1. 関数定義
-		// 2. 無名関数
-
-		// TODO: 以下のrange over func のシグネチャに該当する関数かどうかを見る
-		// func(func()bool)
-		// func(func(V)bool)
-		// func(func(K, V)bool)
-
+		switch fn := n.(type) {
+		case *ast.FuncDecl:
+			discoverFuncDecl(fn)
+		case *ast.FuncLit:
+			discoverFuncLit(fn)
+		}
 	})
 	return nil, nil
+}
 
+func discoverFuncDecl(fn *ast.FuncDecl) {
+	// TODO: 以下のrange over func のシグネチャに該当する関数かどうかを見る
+	// func(func()bool)
+	// func(func(V)bool)
+	// func(func(K, V)bool)
+}
+
+func discoverFuncLit(fn *ast.FuncLit) {
+	// TODO: 以下のrange over func のシグネチャに該当する関数かどうかを見る
+	// func(func()bool)
+	// func(func(V)bool)
+	// func(func(K, V)bool)
 }
