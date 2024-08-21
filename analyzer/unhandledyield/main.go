@@ -10,7 +10,7 @@ import (
 
 var Analyzer = &analysis.Analyzer{
 	Name:             "unhandledyield",
-	Doc:              "",
+	Doc:              "unhandledyield discover yield in range over func is not handled.",
 	Run:              run,
 	RunDespiteErrors: false,
 	Requires:         []*analysis.Analyzer{inspect.Analyzer},
@@ -45,6 +45,8 @@ func discoverFuncDecl(fn *ast.FuncDecl) {
 	// func(func()bool)
 	// func(func(V)bool)
 	// func(func(K, V)bool)
+	// TODO: 関数内にyield呼び出しがあるかどうか見る
+	// TODO: yield呼び出しの返り値を評価し、値の返戻が関数内で行われないか見る
 }
 
 func discoverFuncLit(fn *ast.FuncLit) {
