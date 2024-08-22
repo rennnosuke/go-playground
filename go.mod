@@ -1,6 +1,6 @@
 module github.com/rennnosuke/go-playground
 
-go 1.22.6
+go 1.23.0
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.1
@@ -42,5 +42,7 @@ require (
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
+	golang.org/x/mod v0.6.0 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

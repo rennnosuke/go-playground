@@ -1,4 +1,4 @@
-package main
+package unhandledyield
 
 import (
 	"go/ast"
