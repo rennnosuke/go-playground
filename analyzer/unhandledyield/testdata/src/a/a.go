@@ -1,19 +1,25 @@
 package a
 
-func Backward[E any](s []E) func(func(int, E) bool) {
+func Filter[E any](s []E, f func(e E) bool) func(func(int, E) bool) {
 	return func(yield func(int, E) bool) {
-		for i := len(s) - 1; i >= 0; i-- {
-			if !yield(i, s[i]) {
-				return
+		for i, v := range s {
+			if !f(v) {
+				continue
+			}
+			if !yield(i, v) {
+				break
 			}
 		}
 	}
 }
 
-func UnhandledYieldBackward[E any](s []E) func(func(int, E) bool) {
+func UnhandledYieldFilter[E any](s []E, f func(e E) bool) func(func(int, E) bool) {
 	return func(yield func(int, E) bool) {
-		for i := len(s) - 1; i >= 0; i-- {
-			_ = yield(i, s[i]) // yield should be handled
+		for i, v := range s {
+			if !f(v) {
+				continue
+			}
+			_ = yield(i, v) // want "yield is not handled"
 		}
 	}
 }
