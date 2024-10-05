@@ -2,34 +2,36 @@ package conn
 
 import (
 	"context"
-	"database/sql"
 	"testing"
+	"time"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/go-sql-driver/mysql"
 )
 
 func Test_open(t *testing.T) {
 	type args struct {
 		ctx  context.Context
-		conf mySQLConfig
+		conf mysql.Config
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *sql.DB
 		wantErr bool
 	}{
 		{
-			name: "connection to the database",
+			name: "success to connect to the database",
 			args: args{
 				ctx: context.Background(),
-				conf: mySQLConfig{
-					userName: "root",
-					password: "root",
-					dbName:   "test",
+				conf: mysql.Config{
+					User:      "testuser",
+					Passwd:    "testpass",
+					Addr:      "localhost:3306",
+					DBName:    "test",
+					Collation: "utf8mb4_general_ci",
+					Loc:       time.UTC,
+					Timeout:   time.Second * 30,
 				},
 			},
-			want:    nil,
 			wantErr: false,
 		},
 	}
@@ -42,9 +44,6 @@ func Test_open(t *testing.T) {
 			}
 			if err := got.Ping(); err != nil {
 				t.Fatal(err)
-			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("open() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
