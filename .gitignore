@@ -29,3 +29,6 @@ lib/sqlx/db-5-7
 lib/sqlx/.env
 
 .DS_Store
+
+# ignore envrc
+.envrc
